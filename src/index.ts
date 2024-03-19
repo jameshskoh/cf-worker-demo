@@ -10,14 +10,15 @@
 
 import { cleaveUrlPathName } from './url';
 import { currencyController } from './currency-controller';
+import { homeController } from './home-controller';
 
 export interface Env {
 	VERSION: string;
 	CURRENCY_API_KEY: string;
 
 	// Example binding to KV. Learn more at https://developers.cloudflare.com/workers/runtime-apis/kv/
-	// MY_KV_NAMESPACE: KVNamespace;
-	//
+	KV_MAIN: KVNamespace;
+
 	// Example binding to Durable Object. Learn more at https://developers.cloudflare.com/workers/runtime-apis/durable-objects/
 	// MY_DURABLE_OBJECT: DurableObjectNamespace;
 	//
@@ -33,14 +34,25 @@ export interface Env {
 
 const EXCHANGE_RATE_API = '/exchange-rate';
 
+const KV_KEY_BACKEND = 'endpoints';
+
 export default {
 	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+		// #TODO error boundary + Error types + Error throwing
 		const url = new URL(request.url);
 
 		if (url.pathname.startsWith(EXCHANGE_RATE_API)) {
 			return currencyController(cleaveUrlPathName(url, EXCHANGE_RATE_API), env.CURRENCY_API_KEY);
 		}
 
-		return new Response('Hello World!');
+		const backendUrl = 'https://' + (await env.KV_MAIN.get(KV_KEY_BACKEND));
+
+		if (!backendUrl) {
+			return new Response('Server error', {
+				status: 500,
+			});
+		}
+
+		return homeController(backendUrl);
 	},
 };
