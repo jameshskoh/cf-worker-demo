@@ -12,8 +12,9 @@ compatibility_flags = ["nodejs_compat"]
 # Bind a KV Namespace. Use KV as persistent storage for small key-value pairs.
 # Docs: https://developers.cloudflare.com/workers/runtime-apis/kv
  [[kv_namespaces]]
- binding = "KV_MAIN"
- id = "b3bbb0efcfda45cdb29342b408d311ab"
+ binding = "WORKER_KV"
+ id = "d19ea00a2fd24a6da476c966e8ab993a"
+ preview_id = "6b1f0be8195946d688a538094fb0661b"
 
 # Bind an R2 Bucket. Use R2 to store arbitrarily large blobs of data, such as files.
 # Docs: https://developers.cloudflare.com/r2/api/workers/workers-api-usage/
