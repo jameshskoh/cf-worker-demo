@@ -17,7 +17,7 @@ export interface Env {
 	CURRENCY_API_KEY: string;
 
 	// Example binding to KV. Learn more at https://developers.cloudflare.com/workers/runtime-apis/kv/
-	KV_MAIN: KVNamespace;
+	WORKER_KV: KVNamespace;
 
 	// Example binding to Durable Object. Learn more at https://developers.cloudflare.com/workers/runtime-apis/durable-objects/
 	// MY_DURABLE_OBJECT: DurableObjectNamespace;
@@ -45,7 +45,7 @@ export default {
 			return currencyController(cleaveUrlPathName(url, EXCHANGE_RATE_API), env.CURRENCY_API_KEY);
 		}
 
-		const backendUrl = 'https://' + (await env.KV_MAIN.get(KV_KEY_BACKEND));
+		const backendUrl = 'https://' + (await env.WORKER_KV.get(KV_KEY_BACKEND));
 
 		if (!backendUrl) {
 			return new Response('Server error', {
